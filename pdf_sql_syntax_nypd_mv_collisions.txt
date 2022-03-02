@@ -1,0 +1,53 @@
+1. Total kecelakaan by accident
+SELECT
+ contributing_factor_vehicle_1 AS reason
+,COUNT(*) AS accidents
+FROM `bigquery-public-data.new_york_mv_collisions.nypd_mv_collisions`
+WHERE contributing_factor_vehicle_1 != 'Unspecified'
+GROUP BY 1
+ORDER BY 2 DESC
+
+2. Jumlah kecelakaan dari tahun 2012-2021
+SELECT
+ DATE_TRUNC(DATE(timestamp),DAY) year
+,COUNT(*) AS accidents
+FROM `bigquery-public-data.new_york_mv_collisions.nypd_mv_collisions`
+WHERE contributing_factor_vehicle_1 != 'Unspecified'
+GROUP BY 1
+ORDER BY 1 ASC
+
+3. Top 10 lokasi kejadian kecelakaan
+SELECT
+ COALESCE( on_street_name , off_street_name) as street
+,COUNT(*) as accidents
+FROM `bigquery-public-data.new_york_mv_collisions.nypd_mv_collisions`
+WHERE contributing_factor_vehicle_1 != 'Unspecified' AND COALESCE( on_street_name , off_street_name) is not null
+GROUP BY 1
+ORDER BY 2 DESC
+
+4. Jumlah kecelakaan by Area
+SELECT
+ borough AS area
+,count(*) AS accidents
+FROM `bigquery-public-data.new_york_mv_collisions.nypd_mv_collisions`
+WHERE contributing_factor_vehicle_1 != 'Unspecified' AND borough IS NOT NULL
+GROUP BY 1
+ORDER BY 2 DESC
+
+5. Waktu (jam) sering terjadi kecelakaan
+SELECT
+ EXTRACT(HOUR FROM timestamp) AS hour
+,COUNT(*) AS accidents
+FROM `bigquery-public-data.new_york_mv_collisions.nypd_mv_collisions`
+WHERE contributing_factor_vehicle_1 != 'Unspecified'
+GROUP BY 1
+ORDER BY 1 ASC
+
+6. Jumlah person killed & injured by Area
+SELECT
+ borough
+,SUM(number_of_persons_killed) AS persons_killed
+,SUM(number_of_persons_injured) AS persons_injured
+FROM `bigquery-public-data.new_york_mv_collisions.nypd_mv_collisions`
+WHERE contributing_factor_vehicle_1 != 'Unspecified' AND borough IS NOT NULL
+GROUP BY 1
